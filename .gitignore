@@ -1,0 +1,6 @@
+venv/
+.env
+__pycache__/
+*.pyc
+
+#This prevents your virtual environment, API keys, and Python cache files from getting pushed to GitHub.
