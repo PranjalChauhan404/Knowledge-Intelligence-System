@@ -4,3 +4,4 @@ boto3
 openai
 pypdf
 langchain-community
+langchain-text-splitters
