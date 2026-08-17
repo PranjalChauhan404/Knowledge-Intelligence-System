@@ -1,0 +1,2 @@
+This is a test document for the Knowledge Intelligence System.
+It contains information about artificial intelligence and machine learning.
