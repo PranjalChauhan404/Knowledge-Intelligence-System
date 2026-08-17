@@ -1,0 +1,9 @@
+Machine learning allows computers to learn patterns from data. Supervised learning uses labeled examples to train models.
+
+Artificial intelligence is used to solve complex problems such as image recognition, language understanding, and decision making.
+
+Retrieval augmented generation combines document retrieval with language models to provide answers based on external knowledge.
+
+Deep learning uses neural networks with multiple layers to learn complex patterns from large datasets.
+
+Data preprocessing includes cleaning, transforming, and preparing data before it is given to a machine learning model.

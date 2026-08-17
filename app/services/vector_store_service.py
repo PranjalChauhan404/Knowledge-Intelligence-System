@@ -42,7 +42,8 @@ class VectorStoreService:
         self,
         collection_name,
         query_embedding,
-        top_k=5
+        top_k=5,
+        similarity_threshold=1.0
     ):
         collection = self.get_collection(collection_name)
 
@@ -51,4 +52,25 @@ class VectorStoreService:
             n_results=top_k
         )
 
-        return results
+        filtered_results = {
+            "documents": [[]],
+            "metadatas": [[]],
+            "distances": [[]]
+        }
+
+        for i, distance in enumerate(results["distances"][0]):
+
+            if distance <= similarity_threshold:
+                filtered_results["documents"][0].append(
+                    results["documents"][0][i]
+                )
+
+                filtered_results["metadatas"][0].append(
+                    results["metadatas"][0][i]
+                )
+
+                filtered_results["distances"][0].append(
+                    distance
+                )
+
+        return filtered_results
