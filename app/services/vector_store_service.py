@@ -15,3 +15,25 @@ class VectorStoreService:
         return self.client.get_or_create_collection(
             name=collection_name
         )
+
+    def add_documents(
+        self,
+        collection_name,
+        documents,
+        embeddings
+    ):
+        collection = self.get_collection(collection_name)
+
+        ids = [
+            f"{doc.metadata['document_id']}_{doc.metadata['chunk_id']}"
+            for doc in documents
+        ]
+
+        collection.add(
+            ids=ids,
+            documents=[doc.page_content for doc in documents],
+            embeddings=embeddings,
+            metadatas=[doc.metadata for doc in documents]
+        )
+
+        return len(documents)
