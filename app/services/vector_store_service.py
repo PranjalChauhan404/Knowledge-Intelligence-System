@@ -37,3 +37,18 @@ class VectorStoreService:
         )
 
         return len(documents)
+
+    def search(
+        self,
+        collection_name,
+        query_embedding,
+        top_k=5
+    ):
+        collection = self.get_collection(collection_name)
+
+        results = collection.query(
+            query_embeddings=[query_embedding],
+            n_results=top_k
+        )
+
+        return results
