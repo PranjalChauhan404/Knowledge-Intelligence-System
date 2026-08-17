@@ -23,7 +23,7 @@ class IngestionService:
 
         chunks = self.chunker.split_documents(documents)
 
-        document_id = self.metadata_service.create_document_id()
+        document_id = self.metadata_service.create_document_id(file_path)
 
         for index, chunk in enumerate(chunks):
 

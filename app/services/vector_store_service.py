@@ -29,7 +29,7 @@ class VectorStoreService:
             for doc in documents
         ]
 
-        collection.add(
+        collection.upsert(
             ids=ids,
             documents=[doc.page_content for doc in documents],
             embeddings=embeddings,

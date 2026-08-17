@@ -1,11 +1,15 @@
 import os
 import uuid
+import hashlib
 
 
 class MetadataService:
 
-    def create_document_id(self):
-        return str(uuid.uuid4())
+    def create_document_id(self, file_path):
+        with open(file_path, "rb") as file:
+            file_hash = hashlib.sha256(file.read()).hexdigest()
+
+        return str(uuid.uuid5(uuid.NAMESPACE_URL, file_hash))
 
     def create_metadata(
         self,
