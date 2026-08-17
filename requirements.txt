@@ -5,3 +5,5 @@ openai
 pypdf
 langchain-community
 langchain-text-splitters
+langchain-openai
+chromadb
