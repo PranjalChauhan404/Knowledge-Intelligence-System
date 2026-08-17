@@ -43,7 +43,7 @@ class VectorStoreService:
         collection_name,
         query_embedding,
         top_k=5,
-        similarity_threshold=1.0
+        similarity_threshold=1.6
     ):
         collection = self.get_collection(collection_name)
 
