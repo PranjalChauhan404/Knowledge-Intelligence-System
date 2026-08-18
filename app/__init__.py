@@ -1,10 +1,16 @@
 from flask import Flask, render_template
 from app.routes.health import health_bp
+from app.routes.rag_routes import rag_bp
+
 
 def create_app():
-    app = Flask(__name__, template_folder="../templates")
+    app = Flask(
+        __name__,
+        template_folder="../templates"
+    )
 
     app.register_blueprint(health_bp)
+    app.register_blueprint(rag_bp)
 
     @app.route("/")
     def home():
