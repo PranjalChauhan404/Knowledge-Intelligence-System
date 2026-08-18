@@ -1,14 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Knowledge Intelligence System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        #answer {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+        }
+
+        #sources {
+            margin-top: 15px;
+        }
+
+        .source {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .status {
+            margin-top: 10px;
+        }
+    </style>
 </head>
+
 <body>
 
     <h1>Knowledge Intelligence System</h1>
-    <p>Backend is connected.</p>
+
+    <!-- Upload -->
+    <div class="section">
+
+        <h2>Upload Document</h2>
+
+        <input
+            type="file"
+            id="fileInput"
+            accept=".pdf,.txt,.md"
+        >
+
+        <br>
+
+        <button onclick="uploadDocument()">
+            Upload
+        </button>
+
+        <div id="uploadStatus" class="status"></div>
+
+    </div>
+
+
+    <!-- Question -->
+    <div class="section">
+
+        <h2>Ask a Question</h2>
+
+        <input
+            type="text"
+            id="questionInput"
+            placeholder="Ask something about your documents..."
+            style="width: 70%;"
+        >
+
+        <button onclick="askQuestion()">
+            Ask
+        </button>
+
+    </div>
+
+
+    <!-- Answer -->
+    <div class="section">
+
+        <h2>Answer</h2>
+
+        <div id="answer">
+            No question asked yet.
+        </div>
+
+    </div>
+
+
+    <!-- Sources -->
+    <div class="section">
+
+        <h2>Sources</h2>
+
+        <div id="sources">
+            No sources yet.
+        </div>
+
+    </div>
+
+
+    <script>
+
+        let conversationId = "web_conversation";
+
+
+        async function uploadDocument() {
+
+            const fileInput = document.getElementById("fileInput");
+            const status = document.getElementById("uploadStatus");
+
+            if (!fileInput.files.length) {
+                status.textContent = "Please select a file.";
+                return;
+            }
+
+            const formData = new FormData();
+
+            formData.append(
+                "file",
+                fileInput.files[0]
+            );
+
+            status.textContent = "Uploading...";
+
+            try {
+
+                const response = await fetch(
+                    "/upload",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    status.textContent =
+                        data.error || "Upload failed.";
+                    return;
+                }
+
+                status.textContent =
+                    `Uploaded ${data.filename} successfully. ` +
+                    `${data.chunks_stored} chunks stored.`;
+
+            } catch (error) {
+
+                status.textContent =
+                    "Upload failed: " + error.message;
+
+            }
+        }
+
+
+        async function askQuestion() {
+
+            const questionInput =
+                document.getElementById("questionInput");
+
+            const answerDiv =
+                document.getElementById("answer");
+
+            const sourcesDiv =
+                document.getElementById("sources");
+
+            const query =
+                questionInput.value.trim();
+
+            if (!query) {
+                answerDiv.textContent =
+                    "Please enter a question.";
+                return;
+            }
+
+            answerDiv.textContent = "Thinking...";
+            sourcesDiv.textContent = "Loading sources...";
+
+            try {
+
+                const response = await fetch(
+                    "/ask",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            query: query,
+                            collection_name: "default",
+                            conversation_id: conversationId
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+
+                    answerDiv.textContent =
+                        data.error || "Something went wrong.";
+
+                    sourcesDiv.textContent = "";
+
+                    return;
+                }
+
+                answerDiv.textContent =
+                    data.answer;
+
+                sourcesDiv.innerHTML = "";
+
+                if (!data.sources.length) {
+
+                    sourcesDiv.textContent =
+                        "No sources found.";
+
+                    return;
+                }
+
+                data.sources.forEach(source => {
+
+                    const sourceDiv =
+                        document.createElement("div");
+
+                    sourceDiv.className = "source";
+
+                    sourceDiv.textContent =
+                        `${source.filename} | ` +
+                        `Chunk ${source.chunk_id}`;
+
+                    sourcesDiv.appendChild(sourceDiv);
+
+                });
+
+            } catch (error) {
+
+                answerDiv.textContent =
+                    "Request failed: " + error.message;
+
+                sourcesDiv.textContent = "";
+
+            }
+        }
+
+    </script>
 
 </body>
+
 </html>

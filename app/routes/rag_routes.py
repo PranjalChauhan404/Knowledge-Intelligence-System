@@ -18,7 +18,7 @@ def ask_question():
     query = data.get("query")
     collection_name = data.get(
         "collection_name",
-        "rag_test"
+        "default"
     )
     conversation_id = data.get(
         "conversation_id",
