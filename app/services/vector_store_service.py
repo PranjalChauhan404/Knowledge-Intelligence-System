@@ -74,3 +74,36 @@ class VectorStoreService:
                 )
 
         return filtered_results
+
+    def delete_document(
+        self,
+        collection_name,
+        document_id
+    ):
+        collection = self.get_collection(collection_name)
+
+        results = collection.get(
+            where={
+                "document_id": document_id
+            }
+        )
+
+        ids = results["ids"]
+
+        if ids:
+            collection.delete(ids=ids)
+
+        return len(ids)
+
+    def list_collections(self):
+        return self.client.list_collections()
+
+    def create_collection(self, collection_name):
+        return self.client.get_or_create_collection(
+            name=collection_name
+        )
+
+    def delete_collection(self, collection_name):
+        self.client.delete_collection(
+            name=collection_name
+        )

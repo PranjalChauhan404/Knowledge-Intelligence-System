@@ -1,0 +1,22 @@
+[
+    {
+        "document_id": "9a72e709-a0c8-517a-ae21-5819dba3b77d",
+        "filename": "KIS_Sample_doc.pdf",
+        "file_type": ".pdf",
+        "upload_date": "2026-08-19T14:09:53.498398",
+        "collection": "default",
+        "s3_uri": "s3://kis-documents-pranjal/KIS_Sample_doc.pdf",
+        "status": "indexed",
+        "chunk_count": 82
+    },
+    {
+        "document_id": "7a01c60d-d7a0-5cae-bb39-481ce9f638ff",
+        "filename": "requirements.txt",
+        "file_type": ".txt",
+        "upload_date": "2026-08-19T16:50:21.303864",
+        "collection": "default",
+        "s3_uri": "s3://kis-documents-pranjal/requirements.txt",
+        "status": "indexed",
+        "chunk_count": 325
+    }
+]

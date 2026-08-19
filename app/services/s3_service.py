@@ -28,3 +28,10 @@ class S3Service:
         )
 
         return f"s3://{self.bucket_name}/{object_name}"
+
+    def download_file(self, object_name, file_path):
+        self.s3_client.download_file(
+            self.bucket_name,
+            object_name,
+            file_path
+        )
