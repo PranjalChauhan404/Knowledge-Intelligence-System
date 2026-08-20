@@ -3,7 +3,7 @@ from pydantic import ValidationError
 
 from app.services.rag_service import RAGService
 from app.services.query_transformer import QueryTransformer
-from app.models.api_models import QueryRequest
+from app.models.api_models import QueryRequest, QueryResponse
 from app.utils.logger import logger
 
 
@@ -19,12 +19,13 @@ def query():
     data = request.get_json(silent=True)
 
     if not data:
-        logger.warning("Query request rejected: empty request body")
+        logger.warning(
+            "Query request rejected: empty request body"
+        )
 
         return jsonify({
             "error": "Request body is required"
         }), 400
-
 
     try:
 
@@ -43,18 +44,15 @@ def query():
             "details": error.errors()
         }), 400
 
-
     transformed_query = query_transformer.transform(
         query_request.query
     )
-
 
     logger.info(
         "Query received | collection=%s | conversation_id=%s",
         query_request.collection,
         query_request.conversation_id or "default"
     )
-
 
     result = rag_service.answer_question(
         query=transformed_query,
@@ -67,11 +65,9 @@ def query():
         similarity_threshold=1.6
     )
 
-
     source_count = len(
         result.get("sources", [])
     )
-
 
     logger.info(
         "Query completed | collection=%s | sources=%s",
@@ -79,12 +75,27 @@ def query():
         source_count
     )
 
+    try:
 
-    return jsonify({
-        "answer": result["answer"],
-        "sources": result["sources"],
-        "conversation_id": (
-            query_request.conversation_id
-            or "default"
+        response_model = QueryResponse(
+            answer=result["answer"],
+            sources=result["sources"],
+            conversation_id=(
+                query_request.conversation_id
+                or "default"
+            )
         )
-    })
+
+    except ValidationError as error:
+
+        logger.error(
+            "Response validation failed"
+        )
+
+        return jsonify({
+            "error": "Invalid response generated"
+        }), 500
+
+    return jsonify(
+        response_model.model_dump()
+    )
