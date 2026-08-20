@@ -10,13 +10,13 @@
         "chunk_count": 82
     },
     {
-        "document_id": "7a01c60d-d7a0-5cae-bb39-481ce9f638ff",
-        "filename": "requirements.txt",
+        "document_id": "1a8b3419-4c88-5924-bf8c-3aef574fdba2",
+        "filename": "Doc2.txt",
         "file_type": ".txt",
-        "upload_date": "2026-08-19T16:50:21.303864",
+        "upload_date": "2026-08-20T01:09:53.510634",
         "collection": "default",
-        "s3_uri": "s3://kis-documents-pranjal/requirements.txt",
+        "s3_uri": "s3://kis-documents-pranjal/Doc2.txt",
         "status": "indexed",
-        "chunk_count": 325
+        "chunk_count": 25
     }
 ]

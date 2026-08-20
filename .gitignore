@@ -10,5 +10,8 @@ data/uploads/
 # Local document registry
 data/documents.json
 
+# Application logs
+logs/
+
 # This prevents local environment files, API keys,
 # Python cache files, and runtime data from being pushed to GitHub.
