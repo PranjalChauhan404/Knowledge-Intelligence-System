@@ -48,12 +48,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set image name
+        run: |
+          echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/knowledge-intelligence-system:latest" >> $GITHUB_ENV
+
       - name: Build Docker image
         run: |
-          docker build \
-              -t ghcr.io/${{ github.repository_owner }}/knowledge-intelligence-system:latest .
+          docker build -t "$IMAGE_NAME" .
 
       - name: Push Docker image
         if: github.event_name == 'push'
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/knowledge-intelligence-system:latest
+          docker push "$IMAGE_NAME"
