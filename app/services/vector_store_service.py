@@ -60,6 +60,14 @@ class VectorStoreService:
 
         for i, distance in enumerate(results["distances"][0]):
 
+            print(
+                f"RETRIEVAL DEBUG | distance={distance} | "
+                f"chunk={results['metadatas'][0][i].get('chunk_id')} | "
+                f"file={results['metadatas'][0][i].get('filename')}"
+            )
+            print(
+                f"TEXT: {results['documents'][0][i][:200]}"
+            )
             if distance <= similarity_threshold:
                 filtered_results["documents"][0].append(
                     results["documents"][0][i]

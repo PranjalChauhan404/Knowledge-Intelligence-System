@@ -3,6 +3,7 @@ python-dotenv
 boto3
 openai
 pypdf
+pydantic
 langchain-community
 langchain-text-splitters
 langchain-openai

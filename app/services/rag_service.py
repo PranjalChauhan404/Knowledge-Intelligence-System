@@ -30,6 +30,38 @@ class RAGService:
             similarity_threshold=similarity_threshold
         )
 
+        # ------------------------------------------
+        # No relevant documents found
+        # ------------------------------------------
+
+        if not results["documents"] or not results["documents"][0]:
+
+            answer = (
+                "I couldn't find that information "
+                "in the uploaded documents."
+            )
+
+            self.conversation_service.add_message(
+                conversation_id,
+                "user",
+                query
+            )
+
+            self.conversation_service.add_message(
+                conversation_id,
+                "assistant",
+                answer
+            )
+
+            return {
+                "answer": answer,
+                "sources": []
+            }
+
+        # ------------------------------------------
+        # Build document context
+        # ------------------------------------------
+
         context_parts = []
 
         for document in results["documents"][0]:
@@ -37,10 +69,18 @@ class RAGService:
 
         context = "\n\n".join(context_parts)
 
+        # ------------------------------------------
+        # Build conversation history
+        # ------------------------------------------
+
         history_text = "\n".join(
             f"{message['role']}: {message['content']}"
             for message in history
         )
+
+        # ------------------------------------------
+        # Build prompt
+        # ------------------------------------------
 
         prompt = f"""
 You are a Knowledge Intelligence assistant.
@@ -66,7 +106,17 @@ User Question:
 Answer:
 """
 
-        answer = self.llm_service.generate_response(prompt)
+        # ------------------------------------------
+        # Generate answer
+        # ------------------------------------------
+
+        answer = self.llm_service.generate_response(
+            prompt
+        )
+
+        # ------------------------------------------
+        # Store conversation
+        # ------------------------------------------
 
         self.conversation_service.add_message(
             conversation_id,
@@ -80,15 +130,31 @@ Answer:
             answer
         )
 
-        sources = []
+        # ------------------------------------------
+        # Build sources
+        # ------------------------------------------
 
-        for metadata in results["metadatas"][0]:
-            sources.append({
-                "document_id": metadata.get("document_id"),
-                "filename": metadata.get("filename"),
-                "chunk_id": metadata.get("chunk_id"),
-                "source": metadata.get("source")
-            })
+        fallback_message = (
+            "I couldn't find that information "
+            "in the uploaded documents."
+        )
+
+        if answer.strip() == fallback_message:
+
+            sources = []
+
+        else:
+
+            sources = []
+
+            for metadata in results["metadatas"][0]:
+
+                sources.append({
+                    "document_id": metadata.get("document_id"),
+                    "filename": metadata.get("filename"),
+                    "chunk_id": metadata.get("chunk_id"),
+                    "source": metadata.get("source")
+                })
 
         return {
             "answer": answer,

@@ -1,6 +1,5 @@
 import json
 import os
-from datetime import datetime
 
 
 class DocumentRegistryService:
@@ -29,6 +28,13 @@ class DocumentRegistryService:
 
     def add_document(self, document):
         documents = self.get_all_documents()
+
+        # Prevent duplicate document records. Making Idempotent
+        documents = [
+            existing
+            for existing in documents
+            if existing["document_id"] != document["document_id"]
+        ]
 
         documents.append(document)
 

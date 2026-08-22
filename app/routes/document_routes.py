@@ -50,35 +50,79 @@ def delete_document(document_id):
         }), 404
 
     collection_name = document["collection"]
-
-    chunks_deleted = vector_store.delete_document(
-        collection_name,
-        document_id
-    )
-
     s3_uri = document["s3_uri"]
 
-    bucket_name = s3_service.bucket_name
+    try:
 
-    object_name = s3_uri.split(
-        f"s3://{bucket_name}/",
-        1
-    )[1]
+        # ------------------------------------------
+        # 1. Delete document chunks from vector store
+        # ------------------------------------------
 
-    s3_service.s3_client.delete_object(
-        Bucket=bucket_name,
-        Key=object_name
-    )
+        chunks_deleted = vector_store.delete_document(
+            collection_name,
+            document_id
+        )
 
-    registry_service.delete_document(
-        document_id
-    )
+        # ------------------------------------------
+        # 2. Delete original document from S3
+        # ------------------------------------------
 
-    return jsonify({
-        "message": "Document deleted successfully",
-        "document_id": document_id,
-        "chunks_deleted": chunks_deleted
-    })
+        bucket_name = s3_service.bucket_name
+
+        prefix = f"s3://{bucket_name}/"
+
+        if not s3_uri.startswith(prefix):
+            raise ValueError(
+                "Invalid S3 URI for document"
+            )
+
+        object_name = s3_uri.split(
+            prefix,
+            1
+        )[1]
+
+        s3_service.s3_client.delete_object(
+            Bucket=bucket_name,
+            Key=object_name
+        )
+
+        # ------------------------------------------
+        # 3. Remove document from registry
+        # ------------------------------------------
+
+        registry_service.delete_document(
+            document_id
+        )
+
+        # ------------------------------------------
+        # 4. Success
+        # ------------------------------------------
+
+        return jsonify({
+            "message": "Document deleted successfully",
+            "document_id": document_id,
+            "chunks_deleted": chunks_deleted
+        })
+
+    except Exception as error:
+
+        # IMPORTANT:
+        # Registry is NOT deleted if any previous
+        # operation fails. This allows the user to
+        # retry the deletion instead of losing the
+        # registry record.
+
+        print(
+            f"Document deletion failed: {error}"
+        )
+
+        return jsonify({
+            "error": "Document deletion failed",
+            "message": (
+                "The document could not be completely "
+                "removed. Please try again."
+            )
+        }), 500
 
 
 @document_bp.route(
@@ -87,7 +131,9 @@ def delete_document(document_id):
 )
 def reindex_document(document_id):
 
-    document = registry_service.get_document(document_id)
+    document = registry_service.get_document(
+        document_id
+    )
 
     if document is None:
         return jsonify({
@@ -97,8 +143,15 @@ def reindex_document(document_id):
     s3_uri = document["s3_uri"]
     bucket_name = s3_service.bucket_name
 
+    prefix = f"s3://{bucket_name}/"
+
+    if not s3_uri.startswith(prefix):
+        return jsonify({
+            "error": "Invalid S3 URI for document"
+        }), 500
+
     object_name = s3_uri.split(
-        f"s3://{bucket_name}/",
+        prefix,
         1
     )[1]
 
@@ -113,19 +166,28 @@ def reindex_document(document_id):
 
     try:
 
-        # Download original document from S3
+        # ------------------------------------------
+        # 1. Download original document from S3
+        # ------------------------------------------
+
         s3_service.download_file(
             object_name,
             local_path
         )
 
-        # Re-process document
+        # ------------------------------------------
+        # 2. Re-process document
+        # ------------------------------------------
+
         chunks_stored = ingestion_service.ingest(
             local_path,
             document["collection"]
         )
 
-        # Update registry
+        # ------------------------------------------
+        # 3. Update registry only after success
+        # ------------------------------------------
+
         registry_service.update_document(
             document_id,
             {
@@ -158,7 +220,15 @@ def reindex_document(document_id):
     finally:
 
         if os.path.exists(local_path):
-            os.remove(local_path)
+
+            try:
+                os.remove(local_path)
+            except OSError:
+                pass
 
         if os.path.exists(temp_directory):
-            os.rmdir(temp_directory)
+
+            try:
+                os.rmdir(temp_directory)
+            except OSError:
+                pass

@@ -1,293 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Knowledge Intelligence System</title>
-
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-
-        h1 {
-            margin-bottom: 30px;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            margin-top: 20px;
-        }
-
-        .card h2 {
-            margin-top: 0;
-        }
-
-        .value {
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .status {
-            font-weight: bold;
-        }
-
-        .error {
-            color: red;
-        }
-
-        .success {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .document {
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .document:last-child {
-            border-bottom: none;
-        }
-
-        input,
-        button {
-            padding: 10px;
-            margin-top: 10px;
-        }
-
-        button {
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .danger {
-            color: white;
-            background: #c0392b;
-            border: none;
-        }
-
-        .admin-button {
-            margin-top: 8px;
-        }
-
-        .chat-message {
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            background: #f8f8f8;
-        }
-
-        .chat-question {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .chat-answer {
-            white-space: pre-wrap;
-            margin-bottom: 10px;
-        }
-
-        .source {
-            padding: 5px 0;
-            font-size: 14px;
-        }
-
-        #questionInput {
-            width: 75%;
-        }
-    </style>
+:root{--bg:#080a11;--sidebar:#090b12;--panel:#10131c;--border:#202635;--text:#f4f5fa;--muted:#858da0;--muted2:#626b7d;--purple:#8878ff;--green:#35d3a0;--red:#ff667d}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at 57% -12%,rgba(111,94,235,.10),transparent 31%),linear-gradient(135deg,#080a11,#090b12 58%,#080a10);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}
+.app-shell{min-height:100vh;display:grid;grid-template-columns:243px minmax(0,1fr)}
+.sidebar{position:sticky;top:0;height:100vh;padding:27px 20px 24px;background:rgba(8,10,16,.94);border-right:1px solid #20222c;display:flex;flex-direction:column}.brand{display:flex;align-items:center;gap:11px;padding:1px 0 61px}.brand-mark{width:31px;height:31px;border:1px solid rgba(137,121,255,.55);border-radius:9px;display:grid;place-items:center;color:#9b8dff;background:rgba(136,120,255,.08)}.brand-mark svg{width:18px;height:18px}.brand-name{font-size:14px;line-height:1.04;font-weight:750;letter-spacing:-.025em}.eyebrow{color:#5e6677;font-size:9px;line-height:1;letter-spacing:.19em;text-transform:uppercase}.nav-label{margin:0 9px 11px}.nav{display:grid;gap:5px}.nav-item{width:100%;height:38px;border:0;border-radius:8px;padding:0 11px;display:flex;align-items:center;gap:10px;color:#969eaf;background:transparent;text-align:left;font-size:13px}.nav-item svg{width:17px;height:17px;flex:none}.nav-item:hover{color:#e5e8ef;background:rgba(255,255,255,.03)}.nav-item.active{color:#f2f3f7;background:linear-gradient(90deg,rgba(136,120,255,.18),rgba(136,120,255,.07));box-shadow:inset 2px 0 0 var(--purple)}.nav-count{margin-left:auto;color:#767e91;font-size:10px}.chat-history-sidebar{
+    margin-top:30px;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+}
+.chat-history-label{margin:0 9px 11px;font-size:10px}
+.sidebar-chat-list{
+    max-height:230px;
+    overflow-y:auto;
+    padding-right:3px;
+    scrollbar-width:thin;
+    scrollbar-color:#2a3040 transparent;
+}
+.sidebar-chat-list::-webkit-scrollbar{width:4px}
+.sidebar-chat-list::-webkit-scrollbar-thumb{background:#2a3040;border-radius:8px}
+.sidebar-chat-empty{margin:0 9px;color:#555e70;font-size:10px}
+.sidebar-chat-item{
+    width:100%;min-height:34px;padding:7px 9px;margin-bottom:3px;
+    border:0;border-radius:7px;background:transparent;color:#8e97a9;
+    text-align:left;font-size:11px;line-height:1.35;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis;transition:.16s ease;
+}
+.sidebar-chat-item:hover{color:#e5e8ef;background:rgba(255,255,255,.035)}
+.sidebar-chat-item.active{color:#f0f1f5;background:rgba(136,120,255,.10)}
+.sidebar-chat-index{color:#5e6677;margin-right:5px;font-size:9px}
+@media(max-width:900px){.chat-history-sidebar{display:none}}
+.sidebar-bottom{margin-top:auto;padding:0 4px}.system-indicator{display:flex;align-items:center;gap:7px;color:#70788a;font-size:11px;margin-bottom:7px}.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 9px rgba(53,211,160,.45)}.status-dot.offline{background:var(--red)}.version{font-size:10px;color:#4e5667;letter-spacing:.08em}#systemStatus{display:none}
+.workspace{min-width:0;padding:30px 29px 30px 48px}.workspace-grid{max-width:1147px;margin:0 auto;display:grid;grid-template-columns:minmax(0,780px) 330px;gap:21px;align-items:start}.main-column{min-width:0}.topbar{height:49px;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:31px}.workspace-eyebrow{font-size:10px}.workspace-title{margin:8px 0 0;font-size:31px;line-height:1.05;letter-spacing:-.045em;font-weight:760}.refresh-btn{width:36px;height:36px;border:1px solid var(--border);border-radius:9px;background:#0d1018;color:#9ca4b5;display:grid;place-items:center}.refresh-btn:hover{color:#fff}.refresh-btn svg{width:17px;height:17px}
+.retrieval-header,.ingestion-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.section-title{margin:7px 0 4px;font-size:17px;line-height:1.2;letter-spacing:-.025em;font-weight:720}.section-subtitle{margin:0;color:#737c8e;font-size:11px;line-height:1.4}.grounded-pill{margin-top:5px;padding:8px 13px;border:1px solid rgba(53,211,160,.27);border-radius:999px;color:#70d9bb;background:rgba(53,211,160,.055);font-size:9px;white-space:nowrap}.grounded-pill:before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);margin:0 7px 1px 0}
+.search-box{height:42px;margin-top:16px;border:1px solid #222938;border-radius:7px;background:#0d1018;display:flex;align-items:center;padding:0 9px 0 14px}.search-icon{width:16px;height:16px;color:#697286;flex:none}#questionInput{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#e8ebf2;padding:0 11px;font-size:11px}#questionInput::placeholder{color:#626b7d}.ask-button{width:27px;height:27px;border:0;border-radius:6px;display:grid;place-items:center;color:#fff;background:#8778f5}.ask-button:hover{background:#988aff}.ask-button svg{width:15px;height:15px}
+#chatHistory{min-height:74px}.empty-chat{height:74px;display:flex;align-items:center;justify-content:center;gap:10px;color:#6d7588;font-size:10px}.empty-chat svg{width:19px;height:19px;color:#8878ff}.chat-message{margin-top:16px;padding:15px 16px;border:1px solid #202635;border-radius:8px;background:#0e1119}.chat-question{font-size:11px;font-weight:650;margin-bottom:9px;color:#dfe2e9}.chat-answer{font-size:11px;line-height:1.65;color:#bfc5d2;white-space:pre-wrap;margin-bottom:10px}.source{font-size:9px;color:#777f91;padding:3px 0}
+.ingestion-card{margin-top:12px;padding:27px 25px 24px;border:1px solid #242a39;border-radius:9px;background:#10131c}.ingestion-head{margin-bottom:26px}.ingestion-icon{width:21px;height:21px;color:#897bff}.upload-zone{min-height:138px;border:1px dashed #343b4d;border-radius:5px;display:flex;align-items:center;justify-content:center;background:#10131c}.upload-zone:hover{border-color:#5d55a9;background:#111520}.upload-zone-content{text-align:center}.upload-zone-content svg{width:24px;height:24px;color:#8878ff;margin-bottom:9px}.upload-title{font-size:12px;font-weight:650;color:#e3e5ec}.upload-meta{margin-top:7px;font-size:9px;color:#737c8e}.upload-footer{min-height:38px;margin-top:15px;display:flex;justify-content:flex-end;align-items:center;gap:12px}#uploadStatus{margin-right:auto;color:#70798c;font-size:10px}.upload-button{height:39px;border:0;border-radius:6px;padding:0 15px;color:#fff;background:#8a7bff;font-size:11px;font-weight:650}.upload-button:hover{background:#9b8cff}.upload-button:disabled{opacity:.55;cursor:not-allowed}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:31px}.stat-card{height:80px;border:1px solid #222838;border-radius:7px;background:#10131c;display:flex;align-items:center;gap:13px;padding:0 16px}.stat-icon{width:32px;height:32px;border-radius:7px;display:grid;place-items:center;color:#8d80ff;background:rgba(136,120,255,.08);border:1px solid rgba(136,120,255,.1)}.stat-icon svg{width:17px;height:17px}.stat-label{font-size:10px;color:#71798c;margin-bottom:5px}.stat-value{font-size:16px;color:#eceef3;font-weight:650}
+.library{border:1px solid #242a39;border-radius:9px;background:#10131c;overflow:hidden;margin-top:76px}.library-section{padding:17px 20px 18px}.library-section+.library-section{border-top:1px solid #252b39}.library-title-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px}.library-title{font-size:15px;font-weight:650;color:#e5e7ed}.count-badge{width:21px;height:21px;border:1px solid #262d3d;border-radius:6px;display:grid;place-items:center;color:#727b8d;font-size:9px;background:#0d1018}.library-empty{margin-top:27px;text-align:center;color:#646d7f;font-size:10px}.collection-create{height:38px;margin-top:12px;border:1px solid #242b3a;border-radius:5px;display:flex;align-items:center;background:#0d1018}.collection-create input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;color:#dfe2ea;padding:0 11px;font-size:10px}.collection-create input::placeholder{color:#60697c}.icon-button{width:34px;height:100%;border:0;background:transparent;color:#8c7fff;display:grid;place-items:center}.icon-button svg{width:15px;height:15px}.collection-item{min-height:31px;padding:8px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1c2230;color:#9ea6b7;font-size:11px}.collection-item:last-child{border-bottom:0}.collection-item strong{font-weight:550;color:#c4c9d3}.collection-delete,.admin-button{border:1px solid #303747;background:#141924;color:#858ea0;border-radius:5px;padding:5px 7px;font-size:8px}.danger{color:#ff7488!important;border-color:rgba(255,102,125,.2)!important}.maintenance-copy{margin:9px 0 12px;color:#737c8e;font-size:10px;line-height:1.55}#adminDocuments .document{padding:9px 0;border-bottom:1px solid #1c2230;font-size:10px;color:#70798c}#adminDocuments .document:last-child{border-bottom:0}#adminDocuments .document strong{display:block;color:#c7cbd4;font-size:11px;font-weight:600;margin-bottom:4px;word-break:break-word}#adminDocuments .admin-button{margin-top:7px;margin-right:4px}#documents{display:none}.status.error{color:var(--red)!important}
+@media(max-width:1100px){.workspace{padding-left:28px}.workspace-grid{grid-template-columns:minmax(0,1fr) 280px}}@media(max-width:900px){.app-shell{grid-template-columns:76px minmax(0,1fr)}.sidebar{padding:25px 10px}.brand{justify-content:center;padding-bottom:42px}.brand-name,.nav-label,.nav-item span,.sidebar-bottom .version,.sidebar-bottom .system-indicator span:not(.status-dot){display:none}.nav-item{justify-content:center;padding:0}.nav-count{display:none}.workspace{padding:24px 20px}.workspace-grid{grid-template-columns:1fr}.library{margin-top:0}}@media(max-width:620px){.workspace{padding:20px 14px}.workspace-title{font-size:26px}.topbar{margin-bottom:25px}.retrieval-header{display:block}.grounded-pill{display:inline-block;margin-top:12px}.stats-grid{grid-template-columns:1fr}.stat-card{height:70px}.ingestion-card{padding:21px 16px}.upload-zone{min-height:125px}.upload-footer{align-items:flex-end;flex-direction:column}#uploadStatus{width:100%;margin-right:0}.upload-button{width:100%}}
+</style>
 </head>
-
 <body>
-
-    <h1>Knowledge Intelligence System</h1>
-
-
-    <!-- ========================= -->
-    <!-- UPLOAD -->
-    <!-- ========================= -->
-
-    <div class="card">
-
-        <h2>Upload Document</h2>
-
-        <input
-            type="file"
-            id="fileInput"
-            accept=".pdf,.txt,.md"
-        >
-
-        <br>
-
-        <button onclick="uploadDocument()">
-            Upload
-        </button>
-
-        <div id="uploadStatus" class="success"></div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- DASHBOARD -->
-    <!-- ========================= -->
-
-    <div class="dashboard">
-
-        <div class="card">
-
-            <h2>System Status</h2>
-
-            <div id="systemStatus" class="status">
-                Checking...
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <h2>Collections</h2>
-
-            <div id="collectionCount" class="value">
-                -
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <h2>Documents</h2>
-
-            <div id="documentCount" class="value">
-                -
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <h2>Configuration</h2>
-
-            <p>
-                Top-K:
-                <strong id="topK">-</strong>
-            </p>
-
-            <p>
-                Similarity Threshold:
-                <strong id="threshold">-</strong>
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- CHAT -->
-    <!-- ========================= -->
-
-    <div class="card">
-
-        <h2>Ask the Knowledge Intelligence System</h2>
-
-        <input
-            type="text"
-            id="questionInput"
-            placeholder="Ask a question about your documents..."
-        >
-
-        <button onclick="askQuestion()">
-            Ask
-        </button>
-
-        <div id="chatHistory" style="margin-top: 20px;">
-            No questions asked yet.
-        </div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- DOCUMENTS -->
-    <!-- ========================= -->
-
-    <div class="card">
-
-        <h2>Documents</h2>
-
-        <div id="documents">
-            Loading...
-        </div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- ADMIN -->
-    <!-- ========================= -->
-
-    <div class="card">
-
-        <h2>Admin</h2>
-
-        <h3>Collections</h3>
-
-        <input
-            type="text"
-            id="collectionName"
-            placeholder="New collection name..."
-        >
-
-        <button onclick="createCollection()">
-            Create Collection
-        </button>
-
-        <div id="collectionList">
-            Loading collections...
-        </div>
-
-
-        <h3 style="margin-top: 30px;">
-            Document Management
-        </h3>
-
-        <p>
-            Use the buttons below to re-index or delete documents.
-        </p>
-
-        <div id="adminDocuments">
-            Loading documents...
-        </div>
-
-    </div>
-
-
-    <script>
-
-        // ==========================================
-        // CONVERSATION
-        // ==========================================
-
+<div class="app-shell">
+<aside class="sidebar">
+<div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z"/><path d="M18.5 16.5l.6 2.1 2.1.6-2.1.6-.6 2.1-.6-2.1-2.1-.6 2.1-.6.6-2.1Z"/></svg></div><div class="brand-name">Knowledge<br>Intelligence</div></div>
+<div class="eyebrow nav-label">Workspace</div>
+<nav class="nav">
+<button class="nav-item active" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Overview</span></button>
+<button class="nav-item" type="button" onclick="document.getElementById('ingestion').scrollIntoView({behavior:'smooth'})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H10l2 2h5.5A2.5 2.5 0 0 1 20 9.5v7A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z"/></svg><span>Documents</span><span id="sidebarDocumentCount" class="nav-count">0</span></button>
+<button class="nav-item" type="button" onclick="document.getElementById('administration').scrollIntoView({behavior:'smooth'})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="11" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg><span>Administration</span></button>
+</nav>
+<div class="chat-history-sidebar">
+<div class="eyebrow chat-history-label">Chat history</div>
+<div id="sidebarChatHistory" class="sidebar-chat-list">
+<div id="sidebarChatEmpty" class="sidebar-chat-empty">No chats yet.</div>
+</div>
+</div>
+<div class="sidebar-bottom"><div class="system-indicator"><span id="sidebarStatusDot" class="status-dot"></span><span id="sidebarStatusText">System checking</span><span id="systemStatus" class="status">Checking...</span></div><div class="version">RAG / v1.0</div></div>
+</aside>
+<main class="workspace"><div class="workspace-grid"><div class="main-column">
+<header class="topbar"><div><div class="eyebrow workspace-eyebrow">Knowledge workspace / 01</div><h1 class="workspace-title">Good morning, researcher.</h1></div><button class="refresh-btn" type="button" title="Refresh dashboard" onclick="loadDashboard()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 11a8 8 0 0 0-14.9-4M4 5v4h4"/><path d="M4 13a8 8 0 0 0 14.9 4M20 19v-4h-4"/></svg></button></header>
+<section aria-labelledby="retrieval-title"><div class="retrieval-header"><div><div class="eyebrow">Retrieval</div><h2 id="retrieval-title" class="section-title">Ask your knowledge base</h2><p class="section-subtitle">Search across indexed sources with grounded answers.</p></div><div class="grounded-pill">Grounded responses</div></div>
+<div class="search-box"><svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 5 5"/></svg><input type="text" id="questionInput" placeholder="Ask a question about your documents..." autocomplete="off" onkeydown="if(event.key==='Enter')askQuestion()"><button id="askButton" class="ask-button" type="button" onclick="askQuestion()" aria-label="Ask question"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg></button></div>
+
+<div id="chatHistory"><div class="empty-chat" id="emptyChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v9a2.5 2.5 0 0 1-2.5 2.5H13l-4.5 4v-4h-2A2.5 2.5 0 0 1 4 14.5v-9Z"/><path d="M8 8h8M8 12h5"/></svg><span>No questions yet. Your grounded answers will appear here.</span></div></div></section>
+<section id="ingestion" class="ingestion-card"><div class="ingestion-head"><div><div class="eyebrow">Ingestion</div><h2 class="section-title">Add to your knowledge base</h2><p class="section-subtitle">Upload a source and make it searchable across your workspace.</p></div><svg class="ingestion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V5"/><path d="m8 9 4-4 4 4"/><path d="M5 15.5A4.5 4.5 0 0 1 8.8 11a5.2 5.2 0 0 1 10 1.5A3.5 3.5 0 0 1 18.5 19H7a4 4 0 0 1-2-7.46"/></svg></div>
+<input type="file" id="fileInput" accept=".pdf,.txt,.md" hidden><div id="uploadZone" class="upload-zone" role="button" tabindex="0" onclick="document.getElementById('fileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('fileInput').click()"><div class="upload-zone-content"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V5"/><path d="m8 9 4-4 4 4"/><path d="M5 15.5A4.5 4.5 0 0 1 8.8 11a5.2 5.2 0 0 1 10 1.5A3.5 3.5 0 0 1 18.5 19H7a4 4 0 0 1-2-7.46"/></svg><div id="uploadTitle" class="upload-title">Choose a document to ingest</div><div class="upload-meta">PDF, TXT, or Markdown · up to 25 MB</div></div></div><div class="upload-footer"><div id="uploadStatus"></div><button id="uploadButton" class="upload-button" type="button" onclick="uploadDocument()">Upload document</button></div></section>
+<section class="stats-grid" aria-label="System statistics"><div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path d="M5 12v6c0 1.66 3.13 3 7 3s7-1.34 7-3v-6"/></svg></div><div><div class="stat-label">Collections</div><div id="collectionCount" class="stat-value">-</div></div></div><div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></svg></div><div><div class="stat-label">Documents</div><div id="documentCount" class="stat-value">-</div></div></div><div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></svg></div><div><div class="stat-label">Top-K / threshold</div><div class="stat-value"><span id="topK">-</span> / <span id="threshold">-</span></div></div></div></section>
+<div id="documents" aria-hidden="true"></div>
+</div>
+<aside id="administration" class="library">
+<section class="library-section"><div class="eyebrow">Library</div><div class="library-title-row"><div class="library-title">Indexed documents</div><div id="libraryDocumentCount" class="count-badge">0</div></div><div id="libraryDocuments" class="library-empty">No documents indexed.</div></section>
+<section class="library-section"><div class="eyebrow">Collections</div><div class="library-title-row"><div class="library-title">Organize sources</div></div><div class="collection-create"><input type="text" id="collectionName" placeholder="New collection name..." onkeydown="if(event.key==='Enter')createCollection()"><button class="icon-button" type="button" title="Create collection" onclick="createCollection()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button></div><div id="collectionList" class="library-empty">Loading collections...</div></section>
+<section class="library-section"><div class="eyebrow">Maintenance</div><div class="library-title-row"><div class="library-title">Document management</div></div><p class="maintenance-copy">Re-index or remove a source from your active library.</p><div id="adminDocuments">Loading documents...</div></section>
+</aside>
+</div></main></div>
+
+<script>
+
+
+        // One conversation ID for this browser session
         const conversationId =
             "web_" + Date.now();
 
@@ -304,15 +102,26 @@
                 const healthResponse =
                     await fetch("/health");
 
-                if (!healthResponse.ok) {
+                if (healthResponse.ok) {
+
+                    document.getElementById(
+                        "systemStatus"
+                    ).textContent = "● Online";
+
+                    document.getElementById(
+                        "sidebarStatusText"
+                    ).textContent = "System online";
+
+                    document.getElementById(
+                        "sidebarStatusDot"
+                    ).classList.remove("offline");
+
+                } else {
+
                     throw new Error(
                         "Health check failed"
                     );
                 }
-
-                document.getElementById(
-                    "systemStatus"
-                ).textContent = "● Online";
 
 
                 // Documents
@@ -320,6 +129,7 @@
                     await fetch("/documents");
 
                 if (!documentsResponse.ok) {
+
                     throw new Error(
                         "Failed to load documents"
                     );
@@ -336,6 +146,10 @@
                     "documentCount"
                 ).textContent =
                     documents.length;
+
+                document.getElementById("sidebarDocumentCount").textContent = documents.length;
+                document.getElementById("libraryDocumentCount").textContent = documents.length;
+                renderLibraryDocuments(documents);
 
 
                 // Main document list
@@ -383,6 +197,7 @@
                     await fetch("/collections");
 
                 if (!collectionsResponse.ok) {
+
                     throw new Error(
                         "Failed to load collections"
                     );
@@ -406,6 +221,7 @@
                     await fetch("/config");
 
                 if (!configResponse.ok) {
+
                     throw new Error(
                         "Failed to load configuration"
                     );
@@ -427,7 +243,7 @@
                     configData.similarity_threshold;
 
 
-                // Admin sections
+                // Load admin sections
                 renderCollections(collections);
                 renderAdminDocuments(documents);
 
@@ -438,6 +254,12 @@
                     "systemStatus"
                 ).textContent =
                     "● Offline";
+                document.getElementById(
+                    "sidebarStatusText"
+                ).textContent = "System offline";
+                document.getElementById(
+                    "sidebarStatusDot"
+                ).classList.add("offline");
 
                 document.getElementById(
                     "systemStatus"
@@ -465,6 +287,11 @@
                     "uploadStatus"
                 );
 
+            const uploadButton =
+                document.getElementById(
+                    "uploadButton"
+                );
+
 
             if (!fileInput.files.length) {
 
@@ -485,7 +312,10 @@
 
 
             status.textContent =
-                "Uploading and processing...";
+                `Uploading ${fileInput.files[0].name} and processing...`;
+
+            uploadButton.disabled = true;
+            uploadButton.textContent = "Uploading...";
 
 
             try {
@@ -510,6 +340,10 @@
                         data.error ||
                         "Upload failed.";
 
+                    // Clear the failed selection so the user can
+                    // immediately choose another document.
+                    fileInput.value = "";
+
                     return;
                 }
 
@@ -519,9 +353,9 @@
                     `${data.chunks_stored} chunks stored.`;
 
 
-                await loadDashboard();
-
                 fileInput.value = "";
+
+                await loadDashboard();
 
 
             } catch (error) {
@@ -529,6 +363,16 @@
                 status.textContent =
                     "Upload failed: " +
                     error.message;
+
+                fileInput.value = "";
+
+
+            } finally {
+
+                // Always restore the button, including duplicate
+                // uploads and other failed requests.
+                uploadButton.disabled = false;
+                uploadButton.textContent = "Upload document";
             }
         }
 
@@ -537,167 +381,260 @@
         // CHAT
         // ==========================================
 
-        async function askQuestion() {
+        
 
-            const questionInput =
-                document.getElementById(
-                    "questionInput"
+const chatRecords = [];
+
+function addSidebarChatHistory(query, messageElement, recordId) {
+    const list = document.getElementById("sidebarChatHistory");
+    const empty = document.getElementById("sidebarChatEmpty");
+
+    if (!list || !messageElement) return;
+
+    if (empty) empty.remove();
+
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "sidebar-chat-item";
+    item.dataset.chatId = recordId;
+
+    const index = chatRecords.length;
+    const indexSpan = document.createElement("span");
+    indexSpan.className = "sidebar-chat-index";
+    indexSpan.textContent = String(index + 1).padStart(2, "0");
+
+    const textSpan = document.createElement("span");
+    textSpan.textContent = query;
+
+    item.appendChild(indexSpan);
+    item.appendChild(textSpan);
+    item.title = query;
+
+    item.addEventListener("click", () => {
+        document.querySelectorAll(".sidebar-chat-item").forEach(button => {
+            button.classList.remove("active");
+        });
+
+        item.classList.add("active");
+        showPreviousChat(recordId);
+    });
+
+    list.appendChild(item);
+    list.scrollTop = list.scrollHeight;
+}
+
+function showPreviousChat(recordId) {
+    const record = chatRecords.find(chat => chat.id === recordId);
+    const chatHistory = document.getElementById("chatHistory");
+
+    if (!record || !chatHistory) return;
+
+    // Keep the current/latest Q&A in place.
+    // Only the selected previous chat is shown underneath it.
+    const existingPrevious = chatHistory.querySelector(".previous-chat");
+    if (existingPrevious) {
+        existingPrevious.remove();
+    }
+
+    const previous = record.element.cloneNode(true);
+    previous.classList.add("previous-chat");
+    previous.dataset.previousChatId = recordId;
+
+    chatHistory.appendChild(previous);
+}
+
+    async function askQuestion() {
+
+        const questionInput =
+            document.getElementById("questionInput");
+
+        const chatHistory =
+            document.getElementById("chatHistory");
+
+        const askButton =
+            document.getElementById("askButton");
+
+        const query =
+            questionInput.value.trim();
+
+        if (!query) {
+            return;
+        }
+
+        // Prevent duplicate requests
+        if (askButton.disabled) {
+            return;
+        }
+
+        // Loading state
+        askButton.disabled = true;
+        questionInput.disabled = true;
+        askButton.style.opacity = "0.55";
+        askButton.title = "Thinking...";
+
+        const emptyChat =
+            document.getElementById("emptyChat");
+
+        if (emptyChat) {
+            emptyChat.remove();
+        }
+
+        const message =
+            document.createElement("div");
+
+        message.className =
+            "chat-message";
+
+        const recordId =
+            "chat_" +
+            Date.now() +
+            "_" +
+            Math.random().toString(36).slice(2, 8);
+
+        const questionElement =
+            document.createElement("div");
+
+        questionElement.className =
+            "chat-question";
+
+        questionElement.textContent =
+            `You: ${query}`;
+
+        const answerElement =
+            document.createElement("div");
+
+        answerElement.className =
+            "chat-answer";
+
+        answerElement.textContent =
+            "Thinking...";
+
+        message.appendChild(questionElement);
+        message.appendChild(answerElement);
+
+        chatHistory.innerHTML = "";
+        chatHistory.appendChild(message);
+
+        chatRecords.push({
+            id: recordId,
+            query: query,
+            element: message
+        });
+
+        addSidebarChatHistory(
+            query,
+            message,
+            recordId
+        );
+
+        questionInput.value = "";
+
+        try {
+
+            const response =
+                await fetch(
+                    "/query",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            query: query,
+                            collection: "default",
+                            conversation_id:
+                                conversationId
+                        })
+                    }
                 );
 
-            const chatHistory =
-                document.getElementById(
-                    "chatHistory"
-                );
+            const data =
+                await response.json();
 
+            if (!response.ok) {
 
-            const query =
-                questionInput.value.trim();
+                answerElement.textContent =
+                    data.error ||
+                    "Something went wrong.";
 
-
-            if (!query) {
                 return;
             }
 
+            answerElement.textContent =
+                "AI: " + data.answer;
 
-            // Remove placeholder only
-            // when there are no actual messages.
-            if (
-                !chatHistory.querySelector(
-                    ".chat-message"
-                )
-            ) {
-                chatHistory.innerHTML = "";
-            }
-
-
-            // Create message
-            const message =
-                document.createElement("div");
-
-            message.className =
-                "chat-message";
-
-
-            message.innerHTML = `
-                <div class="chat-question">
-                    You: ${query}
-                </div>
-
-                <div class="chat-answer">
-                    Thinking...
-                </div>
-            `;
-
-
-            chatHistory.appendChild(
-                message
-            );
-
-
-            questionInput.value = "";
-
-
-            const answerElement =
-                message.querySelector(
-                    ".chat-answer"
+            // A new question becomes the current center conversation.
+            const previousChat =
+                chatHistory.querySelector(
+                    ".previous-chat"
                 );
 
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/query",
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                query: query,
-                                collection: "default",
-                                conversation_id:
-                                    conversationId
-                            })
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (!response.ok) {
-
-                    answerElement.textContent =
-                        data.error ||
-                        "Something went wrong.";
-
-                    return;
-                }
-
-
-                answerElement.textContent =
-                    "AI: " + data.answer;
-
-
-                // Sources
-                if (
-                    data.sources &&
-                    data.sources.length > 0
-                ) {
-
-                    const sourcesContainer =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    sourcesContainer.innerHTML =
-                        "<strong>Sources:</strong>";
-
-
-                    data.sources.forEach(source => {
-
-                        const sourceDiv =
-                            document.createElement(
-                                "div"
-                            );
-
-
-                        sourceDiv.className =
-                            "source";
-
-
-                        sourceDiv.textContent =
-                            `${source.filename} | ` +
-                            `Chunk ${source.chunk_id}`;
-
-
-                        sourcesContainer.appendChild(
-                            sourceDiv
-                        );
-
-                    });
-
-
-                    message.appendChild(
-                        sourcesContainer
-                    );
-                }
-
-
-            } catch (error) {
-
-                answerElement.textContent =
-                    "Request failed: " +
-                    error.message;
+            if (previousChat) {
+                previousChat.remove();
             }
-        }
 
+            document
+                .querySelectorAll(".sidebar-chat-item")
+                .forEach(button => {
+                    button.classList.remove("active");
+                });
+
+            message.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest"
+            });
+
+            if (
+                data.sources &&
+                data.sources.length > 0
+            ) {
+
+                const sourcesContainer =
+                    document.createElement("div");
+
+                sourcesContainer.innerHTML =
+                    "<strong>Sources:</strong>";
+
+                data.sources.forEach(source => {
+
+                    const sourceDiv =
+                        document.createElement("div");
+
+                    sourceDiv.className =
+                        "source";
+
+                    sourceDiv.textContent =
+                        `${source.filename} | ` +
+                        `Chunk ${source.chunk_id}`;
+
+                    sourcesContainer.appendChild(
+                        sourceDiv
+                    );
+                });
+
+                message.appendChild(
+                    sourcesContainer
+                );
+            }
+
+        } catch (error) {
+
+            answerElement.textContent =
+                "Request failed: " +
+                error.message;
+
+        } finally {
+
+            // Always restore the UI
+            askButton.disabled = false;
+            questionInput.disabled = false;
+            askButton.style.opacity = "";
+            askButton.title = "Ask question";
+        }
+    }
 
         // ==========================================
         // ADMIN — COLLECTIONS
@@ -729,7 +666,7 @@
                     document.createElement("div");
 
                 div.className =
-                    "document";
+                    "collection-item";
 
 
                 const deleteButton =
@@ -737,12 +674,12 @@
                         ? ""
                         : `
                             <button
-                                class="danger admin-button"
+                                class="danger collection-delete"
                                 onclick="deleteCollection('${name}')"
                             >
                                 Delete
                             </button>
-                        `;
+                          `;
 
 
                 div.innerHTML = `
@@ -751,9 +688,7 @@
                 `;
 
 
-                container.appendChild(
-                    div
-                );
+                container.appendChild(div);
 
             });
         }
@@ -833,6 +768,8 @@
 
         async function deleteCollection(name) {
 
+            name = decodeURIComponent(name);
+
             if (name === "default") {
 
                 alert(
@@ -850,6 +787,7 @@
 
 
             if (!confirmed) {
+
                 return;
             }
 
@@ -950,9 +888,7 @@
                 `;
 
 
-                container.appendChild(
-                    div
-                );
+                container.appendChild(div);
 
             });
         }
@@ -967,6 +903,7 @@
 
 
             if (!confirmed) {
+
                 return;
             }
 
@@ -1030,6 +967,7 @@
 
 
             if (!confirmed) {
+
                 return;
             }
 
@@ -1079,14 +1017,55 @@
         }
 
 
+
+
+    function renderLibraryDocuments(documents) {
+        const container = document.getElementById("libraryDocuments");
+        container.innerHTML = "";
+        if (documents.length === 0) {
+            container.className = "library-empty";
+            container.textContent = "No documents indexed.";
+            return;
+        }
+        container.className = "";
+        documents.forEach(doc => {
+            const item = document.createElement("div");
+            item.style.cssText = "padding:9px 0;border-bottom:1px solid var(--border-soft);";
+            item.innerHTML = `
+                <div style="font-size:11px;color:#c5cad5;font-weight:650;">${escapeHtml(doc.filename)}</div>
+                <div style="font-size:10px;color:#70798d;margin-top:3px;">${escapeHtml(doc.status)} · ${escapeHtml(String(doc.chunk_count))} chunks</div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+        const fileInput = document.getElementById("fileInput");
+        if (fileInput) {
+            fileInput.addEventListener("change", function () {
+                const title = document.getElementById("uploadTitle");
+                if (this.files.length) {
+                    title.textContent = `Selected: ${this.files[0].name}`;
+                }
+            });
+        }
+
         // ==========================================
         // INITIAL LOAD
         // ==========================================
 
         loadDashboard();
 
-    </script>
-
+    
+</script>
 </body>
-
 </html>

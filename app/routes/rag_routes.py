@@ -62,7 +62,11 @@ def query():
             or "default"
         ),
         top_k=3,
-        similarity_threshold=1.6
+        similarity_threshold=1.2
+
+
+
+        
     )
 
     source_count = len(
