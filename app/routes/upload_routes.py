@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-
+from app.utils.logger import logger
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 
@@ -155,15 +155,28 @@ def upload_document():
 
     except Exception as error:
 
+        if "s3_uri" in locals() and s3_uri:
+            try:
+                object_name = s3_uri.split(
+                    f"s3://{s3_service.bucket_name}/",
+                    1
+                )[1]
+
+                # Cleanup S3 if ingestion fails
+                s3_service.delete_file(object_name)
+
+            except Exception as cleanup_error:
+                logger.error(
+                    "S3 cleanup failed %s",
+                    cleanup_error
+                )
         # ------------------------------------------
         # 9. Cleanup if ingestion fails
         # ------------------------------------------
 
         return jsonify({
             "error": "Document upload failed",
-            "details": str(error)
         }), 500
-
 
     finally:
 

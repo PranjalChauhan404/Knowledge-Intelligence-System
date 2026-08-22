@@ -35,3 +35,9 @@ class S3Service:
             object_name,
             file_path
         )
+
+    def delete_file(self, object_name):
+        self.s3_client.delete_object(
+            Bucket=self.bucket_name,
+            Key=object_name
+        )

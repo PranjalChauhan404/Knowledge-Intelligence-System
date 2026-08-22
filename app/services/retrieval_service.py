@@ -13,7 +13,7 @@ class RetrievalService:
         query,
         collection_name,
         top_k=5,
-        similarity_threshold=1.6
+        similarity_threshold=1.2
     ):
 
         query_embedding = self.embedding_service.embed_query(query)

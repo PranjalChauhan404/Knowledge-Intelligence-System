@@ -214,7 +214,6 @@ def reindex_document(document_id):
 
         return jsonify({
             "error": "Re-indexing failed",
-            "details": str(error)
         }), 500
 
     finally:
